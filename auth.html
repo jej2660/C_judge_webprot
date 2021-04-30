@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Auth</title>
+  </head>
+  <body>
+<ul class="nav">
+    <li class="nav-item">
+    <img src="img/logo.png" width=45 height=45>
+    </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="auth.html">Code Submmison</a>
+  </li>
+</ul>
+    <div class="container">
+    <form id="codeForm">
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Select Problem</label>
+            <select class="form-control" name="docker_tag">
+                <option>tutorial_hello</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlTextarea1">Code Input</label>
+            <textarea class="form-control" name="code" rows="10"></textarea>
+        </div>
+        <button type="button" class="btn btn-primary mb-2" onclick="sendCode()">제출</button>
+    </form>
+        <div id = "alert_placeholder"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function sendCode(){
+            var form = $('#codeForm')[0];
+            var data = new FormData(form);
+            var tmp = data.get("code")
+            data.set("code", btoa(tmp))
+            $.ajax({
+                type: "POST",
+                enctype: 'multipart/form-data',
+                url: 'http://158.247.222.175:5000/submit',
+                data: data,
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 600000,
+                beforeSend : function() {
+                },
+                success: function (data) {
+                    console.log(data);
+                    jdata = JSON.parse(data)
+                    if (jdata["status"] == 0){
+                        $('#alert_placeholder').append('<div class="alert alert-success alert-dismissible fade show" role="alert">'+ '<strong>Flag: </strong>' + jdata['flag'] +'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                    }
+                    else{
+                        $('#alert_placeholder').append('<div class="alert alert-danger alert-dismissible fade show" role="alert">'+ '<strong>Something wrong.. </strong>please check in client'+'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                    }
+                },
+                error: function (e) {
+                    console.log("ERROR : ", e);
+                }
+                });
+        }
+    </script>
+  </body>
+</html>
